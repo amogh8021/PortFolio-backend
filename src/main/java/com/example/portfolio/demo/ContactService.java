@@ -1,14 +1,13 @@
 package com.example.portfolio.demo;
 
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,13 +26,26 @@ public class ContactService {
 
     public void sendContactEmail(ContactRequest request) {
 
+        System.out.println("========== CONTACT REQUEST RECEIVED ==========");
+        System.out.println("Name: " + request.getName());
+        System.out.println("Email: " + request.getEmail());
+
         try {
 
+            System.out.println("Step 1: Creating MimeMessage");
+
             MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+            System.out.println("Step 2: MimeMessage created");
+
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            System.out.println("Step 3: MimeMessageHelper created");
 
             helper.setTo(receiverEmail);
             helper.setSubject("📩 New Portfolio Contact Message");
+
+            System.out.println("Step 4: Receiver and Subject set");
 
             String currentTime = LocalDateTime.now()
                     .format(DateTimeFormatter.ofPattern("dd MMM yyyy | hh:mm a"));
@@ -102,9 +114,35 @@ public class ContactService {
 
             helper.setText(html, true);
 
+            System.out.println("Step 5: HTML added");
+
+            System.out.println("Step 6: Sending Email...");
+
             mailSender.send(mimeMessage);
 
-        } catch (MessagingException | MailException e) {
+            System.out.println("Step 7: Email Sent Successfully!");
+
+            System.out.println("=============================================");
+
+        } catch (MessagingException e) {
+
+            System.out.println("MessagingException Occurred");
+            e.printStackTrace();
+
+            throw new RuntimeException("Failed to send email.", e);
+
+        } catch (MailException e) {
+
+            System.out.println("MailException Occurred");
+            e.printStackTrace();
+
+            throw new RuntimeException("Failed to send email.", e);
+
+        } catch (Exception e) {
+
+            System.out.println("Unknown Exception Occurred");
+            e.printStackTrace();
+
             throw new RuntimeException("Failed to send email.", e);
         }
     }
