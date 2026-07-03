@@ -22,7 +22,8 @@ public class CorsConfig {
 
         config.setAllowedOriginPatterns(List.of(
                 "http://localhost:5173",
-                "https://your-portfolio-domain.vercel.app"
+                "https://your-portfolio-domain.vercel.app",
+                "https://portfolio-backend1-u4ay.onrender.com"
         ));
 
         config.setAllowedHeaders(List.of("*"));
